@@ -76,7 +76,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 inputOperacion.value += "=";
             }
         } catch (error) {
-            inputResultado.value = "Error";
+            inputResultado.value = "0";
         };
     });
 
@@ -84,48 +84,55 @@ document.addEventListener("DOMContentLoaded", () => {
         let resultado = inputResultado.value;
         let operacion = inputOperacion.value;
 
-        if (inputResultado.value === "Error" || inputResultado.value === "Infinity" || inputResultado.value === "NaN") {
-            botonLimpiar.click();
-            return;
-        }
+        try {
+            if (inputResultado.value === "Error" || inputResultado.value === "Infinity" || inputResultado.value === "NaN") {
+                botonLimpiar.click();
+                return;
+            }
 
-        //Se evalúa si hay un número para hacerlo negativo o positivo
-        if (elementoDigitado === "+/-"){
-            if (typeof(Number(resultado)) === "number" && resultado !== "0") {
-                if (resultado.startsWith("-")) {
-                    resultado = resultado.slice(1);
-                } else {
-                    resultado = "-" + resultado;
+            //Se evalúa si hay un número para hacerlo negativo o positivo
+            if (elementoDigitado === "+/-"){
+                if (typeof(Number(resultado)) === "number" && resultado !== "0") {
+                    if (resultado.startsWith("-")) {
+                        resultado = resultado.slice(1);
+                    } else {
+                        resultado = "-" + resultado;
+                    }
+                    inputResultado.value = resultado;
                 }
+            //Se evalua si es un operador
+            }else if (elementoDigitado === "+" ||elementoDigitado === "-" ||elementoDigitado === "*" ||elementoDigitado === "/" ||elementoDigitado === "%" ) {            
+                if (resultado !== "0" || operacion !== "") {
+                    if (operacion.endsWith("=") ){
+                        operacion = resultado + elementoDigitado;
+                    }else if ( typeof(Number(resultado)) === "number" && !isNaN(Number(resultado)) && resultado !== "0") {                
+                        operacion += resultado + elementoDigitado; 
+                    }else if (operacion.endsWith("+") ||operacion.endsWith("-") ||operacion.endsWith("*") ||operacion.endsWith("/") ||operacion.endsWith("%")) {                
+                        operacion = operacion.slice(0, -1) + elementoDigitado;
+                    } else {
+                        operacion += resultado + elementoDigitado;
+                    }
+                    inputOperacion.value = operacion;
+                    inputResultado.value = "0";
+                }
+            } else if (resultado === "0"){ //Se evalua no se ha digitado nada
+                console.log("resultado ===0");
+                if (operacion.endsWith("/") && elementoDigitado === "0") { //si se intenta dividir por cero
+                    inputOperacion.value = "NO SE PUEDE DIVIDIR POR CERO";
+                    inputResultado.value = "0";
+                }else{
+                    resultado = elementoDigitado;
+                    inputResultado.value = resultado;
+                }
+            } else { //si ya hay algo digitado se concatena                
+                resultado += elementoDigitado;
                 inputResultado.value = resultado;
             }
-        //Se evalua si es un operador
-        }else if (elementoDigitado === "+" ||elementoDigitado === "-" ||elementoDigitado === "*" ||elementoDigitado === "/" ||elementoDigitado === "%" ) {            
-            if (resultado !== "0" || operacion !== "") {
-                if (operacion.endsWith("=") ){
-                    operacion = resultado + elementoDigitado;
-                }else if ( typeof(Number(resultado)) === "number" && !isNaN(Number(resultado)) && resultado !== "0") {                
-                    operacion += resultado + elementoDigitado; 
-                }else if (operacion.endsWith("+") ||operacion.endsWith("-") ||operacion.endsWith("*") ||operacion.endsWith("/") ||operacion.endsWith("%")) {                
-                    operacion = operacion.slice(0, -1) + elementoDigitado;
-                } else {
-                    operacion += resultado + elementoDigitado;
-                }
-                inputOperacion.value = operacion;
-                inputResultado.value = "0";
-            }
-        } else if (resultado === "0"){ //Se evalua no se ha digitado nada
-            if (operacion.endsWith("/")) {
-                inputOperacion.value = "NO SE PUEDE DIVIDIR POR CERO";
-                inputResultado = "0";
-            }else{
-                resultado = elementoDigitado;
-                inputResultado.value = resultado;
-            }            
-        } else { //si ya hay algo digitado se concatena                        
-            resultado += elementoDigitado;
-            inputResultado.value = resultado;
+        } catch (error) {
+            inputOperacion.value= ""
+            inputResultado.value = "Error inesperado, contacte al administrador";
         }
+       
     };
 
 });
