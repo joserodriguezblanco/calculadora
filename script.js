@@ -29,56 +29,19 @@ document.addEventListener("DOMContentLoaded", () => {
     const botonLimpiar = document.getElementById("boton-limpiar");
     const botonIgual = document.getElementById("boton-resolver");
 
-    //Eventos de los botones con números
-    boton1.addEventListener("click", () => {
-        agregarElementos(boton1.textContent);
+   
+    const botonesNumeros = [boton0, boton1, boton2, boton3, boton4,boton5, boton6, boton7, boton8, boton9];
+    botonesNumeros.forEach(boton => {
+        boton.addEventListener("click", () => {
+            agregarElementos(boton.textContent);
+        });
     });
-    boton2.addEventListener("click", () => {
-        agregarElementos(boton2.textContent);
-    });
-    boton3.addEventListener("click", () => {
-        agregarElementos(boton3.textContent);
-    });
-    boton4.addEventListener("click", () => {
-        agregarElementos(boton4.textContent);
-    });
-    boton5.addEventListener("click", () => {
-        agregarElementos(boton5.textContent);
-    });
-    boton6.addEventListener("click", () => {
-        agregarElementos(boton6.textContent);
-    });
-    boton7.addEventListener("click", () => {
-        agregarElementos(boton7.textContent);
-    });
-    boton8.addEventListener("click", () => {
-        agregarElementos(boton8.textContent);
-    });
-    boton9.addEventListener("click", () => {
-        agregarElementos(boton9.textContent);
-    });
-    boton0.addEventListener("click", () => {
-        agregarElementos(boton0.textContent);
-    });
-
-    //Eventos de los botones con oepraciones especiales
-    botonSuma.addEventListener("click", () => {
-        agregarElementos(botonSuma.textContent);
-    });
-    botonResta.addEventListener("click", () => {
-        agregarElementos(botonResta.textContent);
-    });
-    botonMultiplicacion.addEventListener("click", () => {
-        agregarElementos(botonMultiplicacion.textContent);
-    });
-    botonDivision.addEventListener("click", () => {
-        agregarElementos(botonDivision.textContent);
-    });
-    botonPorcentaje.addEventListener("click", () => {
-        agregarElementos(botonPorcentaje.textContent);
-    });
-    botonNegativo.addEventListener("click", () => {
-        agregarElementos(botonNegativo.textContent);
+//Se agrega el evento a los botones de operaciones
+    const botonesOperadores = [botonSuma, botonResta, botonMultiplicacion, botonDivision, botonPorcentaje,botonNegativo];
+    botonesOperadores.forEach(boton => {
+        boton.addEventListener("click", () => {
+            agregarElementos(boton.textContent);
+        });
     });
 
     botonPunto.addEventListener("click", () => {
@@ -101,9 +64,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     botonIgual.addEventListener("click", () => {
         try {
-            if (!inputOperacion.value.endsWith("=")) {
+            if (inputOperacion.value.endsWith("/") && inputResultado.value === "0") {
+                inputOperacion.value = "NO SE PUEDE DIVIDIR POR CERO";
+                inputResultado = "0";                
+            }
+            else if (!inputOperacion.value.endsWith("=")) {
                 if (!inputOperacion.value.endsWith("%")) {
-                inputOperacion.value += inputResultado.value;                            
+                    inputOperacion.value += inputResultado.value;                            
                 }
                 inputResultado.value = eval(inputOperacion.value.replace(/(\d+)%/g, '($1/100)'));
                 inputOperacion.value += "=";
@@ -113,14 +80,14 @@ document.addEventListener("DOMContentLoaded", () => {
         };
     });
 
-    function agregarElementos(elementoDigitado) {
+    function agregarElementos(elementoDigitado) {       
+        let resultado = inputResultado.value;
+        let operacion = inputOperacion.value;
+
         if (inputResultado.value === "Error" || inputResultado.value === "Infinity" || inputResultado.value === "NaN") {
             botonLimpiar.click();
             return;
         }
-
-        resultado = inputResultado.value;
-        operacion = inputOperacion.value;
 
         //Se evalúa si hay un número para hacerlo negativo o positivo
         if (elementoDigitado === "+/-"){
@@ -133,32 +100,28 @@ document.addEventListener("DOMContentLoaded", () => {
                 inputResultado.value = resultado;
             }
         //Se evalua si es un operador
-        }else if (elementoDigitado === "+" ||elementoDigitado === "-" ||elementoDigitado === "*" ||elementoDigitado === "/" ) {            
-
-            if (operacion.endsWith("=") ){                
-                operacion = resultado + elementoDigitado;
+        }else if (elementoDigitado === "+" ||elementoDigitado === "-" ||elementoDigitado === "*" ||elementoDigitado === "/" ||elementoDigitado === "%" ) {            
+            if (resultado !== "0" || operacion !== "") {
+                if (operacion.endsWith("=") ){
+                    operacion = resultado + elementoDigitado;
+                }else if ( typeof(Number(resultado)) === "number" && !isNaN(Number(resultado)) && resultado !== "0") {                
+                    operacion += resultado + elementoDigitado; 
+                }else if (operacion.endsWith("+") ||operacion.endsWith("-") ||operacion.endsWith("*") ||operacion.endsWith("/") ||operacion.endsWith("%")) {                
+                    operacion = operacion.slice(0, -1) + elementoDigitado;
+                } else {
+                    operacion += resultado + elementoDigitado;
+                }
                 inputOperacion.value = operacion;
                 inputResultado.value = "0";
-            }else
-            
-            if ( typeof(Number(resultado)) === "number" && !isNaN(Number(resultado)) && resultado !== "0") {                
-                operacion += resultado + elementoDigitado;   
-                inputOperacion.value = operacion;
-                inputResultado.value = "0"; 
-                resultado = "0";
-            }else if (operacion.endsWith("+") ||operacion.endsWith("-") ||operacion.endsWith("*") ||operacion.endsWith("/") ||operacion.endsWith("%")) {                
-                operacion = operacion.slice(0, -1) + elementoDigitado;
-                inputOperacion.value = operacion;
-            } else {
-                operacion += resultado + elementoDigitado;
-                inputOperacion.value = operacion;
-                inputResultado.value = "0";
-                resultado = "0"; 
             }
-
-        } else if (resultado === "0"){ //Se evalua no se ha digitado nada            
-            resultado = elementoDigitado;
-            inputResultado.value = resultado;
+        } else if (resultado === "0"){ //Se evalua no se ha digitado nada
+            if (operacion.endsWith("/")) {
+                inputOperacion.value = "NO SE PUEDE DIVIDIR POR CERO";
+                inputResultado = "0";
+            }else{
+                resultado = elementoDigitado;
+                inputResultado.value = resultado;
+            }            
         } else { //si ya hay algo digitado se concatena                        
             resultado += elementoDigitado;
             inputResultado.value = resultado;
