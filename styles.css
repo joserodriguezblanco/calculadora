@@ -1,30 +1,30 @@
 body {
-  background: #333;
+  background: #444;
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
-  color: white;
+  /* color: white; */
   font-family: sans-serif;
 }
 
 .calc {
-  background: #222;
+  /* background: #222; */
   padding: 15px;
   border-radius: 10px;
   width: 300px;
 }
 
 #input-resultado,#input-operacion {
-  width: 95%;
+  width: 90%;
   font-size: 24px;
   padding: 10px;
-  margin-bottom: 10px;
-  background: #000;
-  border: none;
-  color: lime;
+  margin-bottom: 10px;  
+  border: none;  
   text-align: right;
-}
+  /* background: #000;
+  color: lime; */
+} 
 
 .buttons {
   display: grid;
@@ -35,12 +35,18 @@ body {
 
 button {
   padding: 15px;
-  font-size: 18px;
-  background: #444;
+  font-size: 18px;  
   border: none;
   border-radius: 5px;
-  color: white;
+  /* background: #444;
+  color: white; */
   cursor: pointer;
+}
+
+#boton-claro {
+    grid-column: span 4; 
+    background: #f0ad4e;
+    height: 45px;
 }
 
 #boton-limpiar{
@@ -48,9 +54,14 @@ button {
     background: crimson;
 }
 
-.boton-numerico { 
-  background: #777;
+#boton-limpiar-claro{
+    grid-column: span 1; 
+    background: #f0ad4e;
 }
+
+/* .boton-numerico { 
+  background: #777;
+} */
 
 .boton-operador { 
   background: #5338ee;
@@ -63,3 +74,25 @@ button {
 button:hover {
   background: #999;
 }
+
+.modo-claro {    
+  .calc {
+    background: red;
+  };
+  input{
+    background: white;
+    color:#f0ad4e;
+  };
+  .boton-numerico {background: gray;color: #f0f0f0;};
+
+}
+.modo-oscuro {  
+  .calc {
+    background: #222;
+  };
+  input {
+    background: #000;
+    color: lime;
+  }; 
+  .boton-numerico {background: black;  color: greenyellow;};
+} 

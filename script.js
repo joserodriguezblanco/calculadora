@@ -1,4 +1,10 @@
 document.addEventListener("DOMContentLoaded", () => {
+
+    //Se define el modo claro y oscuro
+    const body = document.body;
+    body.classList.add("modo-claro");
+    body.classList.remove("modo-oscuro");
+
     //Se define el input
     const inputResultado = document.getElementById("input-resultado");
     const inputOperacion = document.getElementById("input-operacion");
@@ -29,6 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const botonLimpiar = document.getElementById("boton-limpiar");
     const botonIgual = document.getElementById("boton-resolver");
 
+    const botonClaro =document.getElementById("boton-claro");
    
     const botonesNumeros = [boton0, boton1, boton2, boton3, boton4,boton5, boton6, boton7, boton8, boton9];
     botonesNumeros.forEach(boton => {
@@ -42,6 +49,22 @@ document.addEventListener("DOMContentLoaded", () => {
         boton.addEventListener("click", () => {
             agregarElementos(boton.textContent);
         });
+    });
+
+    botonClaro.addEventListener("click", () => {
+        const body = document.body;                   
+        body.classList.toggle("modo-oscuro");
+        body.classList.toggle("modo-claro");
+
+        if (body.classList.contains("modo-claro")) {
+            botonClaro.textContent = "☼";
+            body.classList.remove("modo-oscuro");
+            body.classList.add("modo-claro");
+        } else {
+            botonClaro.textContent = "☀︎";
+            body.classList.remove("modo-claro");
+            body.classList.add("modo-oscuro");
+        }
     });
 
     botonPunto.addEventListener("click", () => {
@@ -81,6 +104,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     function agregarElementos(elementoDigitado) {       
+        console.log("0");
         let resultado = inputResultado.value;
         let operacion = inputOperacion.value;
 
@@ -102,10 +126,16 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             //Se evalua si es un operador
             }else if (elementoDigitado === "+" ||elementoDigitado === "-" ||elementoDigitado === "*" ||elementoDigitado === "/" ||elementoDigitado === "%" ) {            
-                if (resultado !== "0" || operacion !== "") {
+                console.log("1");
+                console.log(typeof(Number(resultado)))
+                console.log(!isNaN(Number(resultado)))
+                console.log(resultado)
+                //if (operacion !== "") { // || resultado !== "0"
+                    console.log("3");
                     if (operacion.endsWith("=") ){
                         operacion = resultado + elementoDigitado;
-                    }else if ( typeof(Number(resultado)) === "number" && !isNaN(Number(resultado)) && resultado !== "0") {                
+                    }else if ( typeof(Number(resultado)) === "number" && !isNaN(Number(resultado))) {                
+                        console.log("resultado es un numero");
                         operacion += resultado + elementoDigitado; 
                     }else if (operacion.endsWith("+") ||operacion.endsWith("-") ||operacion.endsWith("*") ||operacion.endsWith("/") ||operacion.endsWith("%")) {                
                         operacion = operacion.slice(0, -1) + elementoDigitado;
@@ -114,9 +144,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
                     inputOperacion.value = operacion;
                     inputResultado.value = "0";
-                }
+                //}
             } else if (resultado === "0"){ //Se evalua no se ha digitado nada
-                console.log("resultado ===0");
+                console.log("2");
                 if (operacion.endsWith("/") && elementoDigitado === "0") { //si se intenta dividir por cero
                     inputOperacion.value = "NO SE PUEDE DIVIDIR POR CERO";
                     inputResultado.value = "0";
